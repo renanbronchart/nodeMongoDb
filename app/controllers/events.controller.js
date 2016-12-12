@@ -12,8 +12,6 @@ module.exports = {
 // show all events
 //
 function showEvents(req, res) {
-  // get all events
-
   Event.find({}, (err, events) => {
     if (err) {
       res.status(404);
@@ -25,7 +23,6 @@ function showEvents(req, res) {
   })
 
   // return a view with data
-
 }
 
 
@@ -39,7 +36,10 @@ function showSingleEvent(req, res) {
       res.send('Events not found !')
     }
 
-    res.render('pages/single', { event: event });
+    res.render('pages/single', {
+      event: event,
+      success: req.flash('success')
+    });
 
   });
 
@@ -89,6 +89,10 @@ function processCreate(req, res) {
     if (err) {
       throw err;
     }
+
+    // set a successful flash message
+    req.flash('success', 'succesfuly created event!');
+
     // redirect to the
     res.redirect(`/events/${event.slug}`)
   })

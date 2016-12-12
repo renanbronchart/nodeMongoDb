@@ -18,6 +18,7 @@ router.get('/events/seed', eventsControllers.seedEvents);
 router.get('/events/create', eventsControllers.showCreate);
 router.post('/events/create', eventsControllers.processCreate);
 
+
 // show a single event
 router.get('/events/:slug', eventsControllers.showSingleEvent);
 
