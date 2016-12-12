@@ -9,6 +9,13 @@ router.get('/', mainControllers.showHome);
 
 // events routes
 router.get('/events', eventsControllers.showEvents);
+
+// seed events
+router.get('/events/seed', eventsControllers.seedEvents);
+
+
+
+// show a single event
 router.get('/events/:slug', eventsControllers.showSingleEvent);
 
 module.exports = router;

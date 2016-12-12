@@ -1,22 +1,73 @@
+const Event = require('../models/event');
+
 module.exports = {
-  showEvents: (req, res) => {
-    // create dummy events
-    const events = [
-      {name: 'Basketball', slug: 'basketball', description: 'a basket'},
-      {name: 'Swimming', slug: 'swimming', description: 'Michael Phelps is a champions'},
-      {name: 'Weightlifting', slug: 'Weightlifting', description: 'Lifting heavy'}
-    ];
+  showEvents: showEvents,
+  showSingleEvent: showSingleEvent,
+  seedEvents: seedEvents
+}
 
-    // return a view with data
+//
+// show all events
+//
+function showEvents(req, res) {
+  // get all events
 
-    res.render('pages/events', {events: events});
-  },
+  Event.find({}, (err, events) => {
+    if (err) {
+      res.status(404);
+      res.send('Events not found !')
+    }
+
+  res.render('pages/events', {events: events});
+
+  })
+
+  // return a view with data
+
+}
 
 
-  // show single event
-  showSingleEvent: (req, res) => {
-    const event = {name: 'Basketball', slug: 'basketball', description: 'a basket'};
+//
+// show single event
+//
+function showSingleEvent(req, res) {
+  Event.findOne({ slug : req.params.slug }, (err, event) => {
+    if (err) {
+      res.status(404);
+      res.send('Events not found !')
+    }
 
     res.render('pages/single', { event: event });
-  }
+
+  });
+
 }
+
+
+//
+// seed our database
+//
+function seedEvents(req, res) {
+  // ceate some events
+  const events = [
+    {name: 'Basketball', description: 'a basket'},
+    {name: 'Swimming', description: 'Michael Phelps is a champions'},
+    {name: 'Weightlifting', description: 'Lifting heavy'},
+    {name: 'judojusjistu', description: 'Jigoro kano has invented this game'}
+  ];
+
+
+  // use the Event model to insert/save
+  Event.remove({}, () => {
+    for (event of events) {
+      var newEvent = new Event(event);
+
+      newEvent.save();
+    }
+  })
+
+
+  //seeded
+  res.send('Database seeded')
+}
+
