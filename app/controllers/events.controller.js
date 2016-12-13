@@ -3,7 +3,9 @@ const Event = require('../models/event');
 module.exports = {
   showEvents: showEvents,
   showSingleEvent: showSingleEvent,
-  seedEvents: seedEvents
+  seedEvents: seedEvents,
+  showCreate: showCreate,
+  processCreate: processCreate
 }
 
 //
@@ -69,5 +71,27 @@ function seedEvents(req, res) {
 
   //seeded
   res.send('Database seeded')
+}
+
+
+function showCreate(req, res) {
+  res.render('pages/create')
+}
+
+function processCreate(req, res) {
+  const event = new Event({
+    name: req.body.name,
+    description: req.body.description
+  });
+
+
+  event.save((err) => {
+    if (err) {
+      throw err;
+    }
+    // redirect to the
+    res.redirect(`/events/${event.slug}`)
+  })
+
 }
 
