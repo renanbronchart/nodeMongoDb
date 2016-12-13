@@ -1,5 +1,5 @@
 <div class="jumbotron">
-  <h1>Create an EVent</h1>
+  <h1>Editing <%= event.name %></h1>
 </div>
 
 <div class="row">
@@ -12,19 +12,19 @@
     </div>
   <% } %>
 
-    <form action='/events/create' method='post'>
+    <form action='/events/<%= event.slug %>' method='post'>
       <div class="form-group">
         <label>Name</label>
-          <input type='text' name='name' class='form-control' />
+          <input type='text' name='name' class='form-control' value='<%= event.name %>'/>
       </div>
 
       <div class="form-group">
         <label>description</label>
-        <textarea name='description' rows='5' class='form-control'></textarea>
+        <textarea name='description' rows='5' class='form-control'><%= event.description %></textarea>
       </div>
 
       <div class="form-group">
-        <button type=='submit' class="btn btn-success btn-lg">Create</button>
+        <button type=='submit' class="btn btn-success btn-lg">Update</button>
       </div>
     </form>
   </div>

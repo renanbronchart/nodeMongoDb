@@ -10,6 +10,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const flash = require('connect-flash');
+const expressValidator = require('express-validator');
 
 // configure cookie parser
 app.use(cookieParser());
@@ -34,6 +35,7 @@ mongoose.connect(process.env.DB_URI);
 
 // use the body parser
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(expressValidator()); // use bodyParser
 
 // set the routes
 app.use(require('./app/routes'));

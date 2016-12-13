@@ -5,7 +5,10 @@ module.exports = {
   showSingleEvent: showSingleEvent,
   seedEvents: seedEvents,
   showCreate: showCreate,
-  processCreate: processCreate
+  processCreate: processCreate,
+  showEdit: showEdit,
+  processEdit: processEdit,
+  deleteEvent: deleteEvent
 }
 
 //
@@ -18,7 +21,10 @@ function showEvents(req, res) {
       res.send('Events not found !')
     }
 
-  res.render('pages/events', {events: events});
+  res.render('pages/events', {
+    events: events,
+    success: req.flash('success')
+  });
 
   })
 
@@ -75,10 +81,26 @@ function seedEvents(req, res) {
 
 
 function showCreate(req, res) {
-  res.render('pages/create')
+  res.render('pages/create', {
+    errors: req.flash('errors')
+  })
 }
 
 function processCreate(req, res) {
+  // validate information
+  req.checkBody('name', 'Name is required').notEmpty();
+  req.checkBody('description', 'description is also required').notEmpty();
+
+  // if there are errors, redirect and save errors flash
+  const errors = req.validationErrors();
+
+  if (errors) {
+    req.flash('errors', errors.map(err => err.msg));
+    return res.redirect('/events/create');
+  }
+
+
+  // create event
   const event = new Event({
     name: req.body.name,
     description: req.body.description
@@ -99,3 +121,68 @@ function processCreate(req, res) {
 
 }
 
+function showEdit(req, res) {
+  Event.findOne({ slug: req.params.slug }, (err, event) => {
+    if (err) {
+      res.status(404);
+      res.send('Events not found !')
+    }
+
+
+    res.render('pages/edit', {
+      event: event,
+      errors: req.flash('errors')
+    });
+  })
+}
+
+
+
+function processEdit(req, res) {
+  // validate information
+  req.checkBody('name', 'Name is required').notEmpty();
+  req.checkBody('description', 'description is also required').notEmpty();
+
+  // if there are errors, redirect and save errors flash
+  const errors = req.validationErrors();
+
+  if (errors) {
+    req.flash('errors', errors.map(err => err.msg));
+    return res.redirect(`/events/${req.params.slug}/edit`);
+  }
+
+
+ // finding a current event
+ Event.findOne({ slug: req.params.slug }, (err, event) => {
+  event.name = req.body.name;
+  event.description = req.body.description;
+
+
+  event.save((err) => {
+    if (err) {
+      throw err;
+    }
+
+    req.flash('success', 'successfuly updating event');
+    res.redirect('/events');
+  })
+ })
+
+ // updating that event
+
+
+ // success flash message
+
+
+ //redirect back to the event
+}
+
+
+
+
+function deleteEvent(req, res) {
+  Event.remove({ slug: req.params.slug }, (err) => {
+    req.flash('success', 'Your are deleted this event');
+    res.redirect('/events');
+  })
+}
